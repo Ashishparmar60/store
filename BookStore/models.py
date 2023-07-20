@@ -24,7 +24,6 @@ class Author(models.Model):
     def __str__(self) -> str:
         return self.name
     
-
 class Customer(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -49,7 +48,6 @@ class Order(models.Model):
 class OrderedBook(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    quantity = models.PositiveSmallIntegerField()
     unit_price = models.DecimalField(max_digits=6, decimal_places=2)
 
 

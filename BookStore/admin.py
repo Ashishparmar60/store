@@ -1,4 +1,7 @@
+from typing import Any
 from django.contrib import admin
+from django.db.models.query import QuerySet
+from django.http.request import HttpRequest
 from django.utils.html import format_html, urlencode
 from django.urls import reverse
 from django.db.models.aggregates import Count
@@ -12,6 +15,11 @@ class BookAdmin(admin.ModelAdmin):
     list_filter = ['author', 'genre']
     list_select_related = ['author']
     search_fields = ['name']
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related('genre')
+    
+    # I add this get less querise because Book is main page in our Project 
 
     def get_genre(self, objects):
         return ',\n'.join([i.genre for i in objects.genre.all()]).upper()

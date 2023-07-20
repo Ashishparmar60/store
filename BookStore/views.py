@@ -8,6 +8,7 @@ from rest_framework.filters import SearchFilter
 
 
 class BooksViewSet(ModelViewSet):
+    http_method_names = ['get']
     queryset = Book.objects.select_related('author').prefetch_related('genre').all() # Here we use select_related for OneToOne
     # prefetch_related for ManyToMany relationship after this our quries will be almost 6 under 3.1 ms.
     serializer_class = BookSerializer
