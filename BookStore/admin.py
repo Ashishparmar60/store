@@ -5,7 +5,7 @@ from django.http.request import HttpRequest
 from django.utils.html import format_html, urlencode
 from django.urls import reverse
 from django.db.models.aggregates import Count
-from .models import Book, Collection, Author, Customer
+from .models import Book, Collection, Author, Customer, Order, OrderedBook
 
 
 @admin.register(Book)
@@ -18,12 +18,11 @@ class BookAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         return super().get_queryset(request).prefetch_related('genre')
-    
     # I add this get less querise because Book is main page in our Project 
-
+    
     def get_genre(self, objects):
-        return ',\n'.join([i.genre for i in objects.genre.all()]).upper()
-     # list comprehension method for all genre is in that book's object. Also for fun i add upper..
+        return ',\n'.join([i.genre for i in objects.genre.all()])
+    # list comprehension method for all genre is in that book's object. Also for fun i add upper..
 
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
@@ -64,12 +63,17 @@ class CollectionAdmin(admin.ModelAdmin):
         return super().get_queryset(request).annotate(
             Books_count = Count('book')
         )
-    
-    @admin.register(Customer)
-    class CustomerAdmin(admin.ModelAdmin):
-        list_display = ['first_name', 'last_name', 'email', 'phone']
-        search_fields = ['first_name__istartswith']
-       
 
+@admin.register(Customer)
+class CustomerAdmin(admin.ModelAdmin):
+    list_display = ['first_name', 'last_name', 'phone', 'birth_day']
+    ordering = ['user__first_name', 'user__last_name']
     
+class OrderBookInline(admin.TabularInline):
+    autocomplete_fields = ['book']
+    model = OrderedBook
 
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ['placed_at', 'payment', 'customer']    
+    inlines = [OrderBookInline]
