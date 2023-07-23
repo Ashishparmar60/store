@@ -33,6 +33,7 @@ class Customer(models.Model):
 
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name}'
+        
     
     @admin.display(ordering='user__first_name')
     def first_name(self):
@@ -60,7 +61,7 @@ class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
 
 class OrderedBook(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='book')
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     unit_price = models.DecimalField(max_digits=6, decimal_places=2)
 
