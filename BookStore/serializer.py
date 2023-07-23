@@ -1,12 +1,22 @@
 from rest_framework import serializers
-from .models import Book, Customer, Order, OrderedBook
+from .models import Book, Customer, Order, OrderedBook, BookFiles
+
+class BookFileSerializer(serializers.ModelSerializer):
+    def create(self, validated_data):
+        book_id = self.context['book_id']
+        return BookFiles.objects.create(book_id=book_id, **validated_data)
+    
+    class Meta:
+        model = BookFiles
+        fields = ['id', 'file']
 
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = ['name', 'author', 'unit_price', 'genre']
+        fields = ['id', 'name', 'author', 'unit_price', 'genre', 'files']
     author = serializers.StringRelatedField()
     genre = serializers.StringRelatedField(many=True) 
+    files = BookFileSerializer(many=True, read_only=True)
 
 class SimpleBookSerializer(serializers.ModelSerializer):
     class Meta:

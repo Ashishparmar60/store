@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.contrib import admin
+from django.core.validators import FileExtensionValidator
 
 class Collection(models.Model):
     genre = models.CharField(max_length=225)
@@ -18,6 +19,13 @@ class Book(models.Model):
 
     def __str__(self) -> str:
         return self.name
+    
+    class Meta:
+        ordering = ['name']
+
+class BookFiles(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='files')
+    file = models.FileField(upload_to='BookStore/file', validators=[FileExtensionValidator(allowed_extensions=['pdf'])])
     
 class Author(models.Model):
     name = models.CharField(max_length=255)

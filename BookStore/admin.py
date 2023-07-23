@@ -5,14 +5,18 @@ from django.http.request import HttpRequest
 from django.utils.html import format_html, urlencode
 from django.urls import reverse
 from django.db.models.aggregates import Count
-from .models import Book, Collection, Author, Customer, Order, OrderedBook
+from .models import Book, Collection, Author, Customer, Order, OrderedBook, BookFiles
 
+class BookFileInline(admin.TabularInline):
+    model = BookFiles
+    max_num = 1
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
     list_display = ['name', 'unit_price', 'get_genre', 'author', 'description']
     list_editable = ['unit_price']
     list_filter = ['author', 'genre']
+    inlines = [BookFileInline]
     list_select_related = ['author']
     search_fields = ['name']
 
